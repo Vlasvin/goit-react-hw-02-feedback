@@ -1,10 +1,8 @@
-// import { Feedback } from 'components/Feedback/Feedback';
 import React, { Component } from 'react';
-import {
-  Title,
-  FeedbackResult,
-} from 'components/FeedbackOptions/FeedbackOptions.styled';
 import { FeedbackOptions } from 'components/FeedbackOptions/FeedbackOptions';
+import { Statistics } from 'components/Statistics/Statistics';
+import { Section } from 'components/Section/Section';
+import { Layout } from 'components/Layout/Layout';
 
 export class App extends Component {
   state = {
@@ -19,45 +17,34 @@ export class App extends Component {
         [option]: prevState[option] + 1,
       };
     });
-    // console.log(this.prevState[option]);
   };
-  handleNeutral = () => {
-    this.setState(prevState => {
-      return {
-        neutral: prevState.neutral + 1,
-      };
-    });
-  };
-  handleBad = () => {};
 
+  countTotalFeedback = ({ good, neutral, bad }) => good + neutral + bad;
+  countPositiveFeedbackPercentage = ({ good, neutral, bad }) =>
+    Math.round((good / this.countTotalFeedback(this.state)) * 100);
   render() {
+    const { good, neutral, bad } = this.state;
+
     return (
-      <div>
-        <Title>Please leave feedback</Title>
-        <FeedbackOptions
-          options={Object.keys(this.state)}
-          onLeaveFeedback={this.leaveFeedback}
-        />
-        <Title>Statistics</Title>
-        <FeedbackResult>Good: {this.state.good}</FeedbackResult>
-        <FeedbackResult>Neutral: {this.state.neutral}</FeedbackResult>
-        <FeedbackResult>Bad: {this.state.bad}</FeedbackResult>
-      </div>
+      <Layout>
+        <Section title="Please leave feedback">
+          <FeedbackOptions
+            options={Object.keys(this.state)}
+            onLeaveFeedback={this.leaveFeedback}
+          />
+        </Section>
+        <Section title="Statistics">
+          <Statistics
+            good={good}
+            neutral={neutral}
+            bad={bad}
+            total={this.countTotalFeedback(this.state)}
+            positivePercentage={this.countPositiveFeedbackPercentage(
+              this.state
+            )}
+          ></Statistics>
+        </Section>
+      </Layout>
     );
   }
 }
-
-// export const App = () => {
-//   return (
-//     <div
-//       style={{
-//         height: '100vh',
-//         display: 'flex',
-//         justifyContent: 'center',
-//         alignItems: 'center',
-//         fontSize: 40,
-//         color: '#010101',
-//       }}
-//     ></div>
-//   );
-// };
